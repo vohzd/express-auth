@@ -11,4 +11,6 @@ Uses NuxtJS (Helper Framework for VueJS) to handle the front-end.
 ## How to run
 - `npm i nodemon -g` (If you don't already have it)
 - `npm i`
-- `npm run dev`
+- `npm run dev` (For nuxt frontend)
+- `npm run server` (For server)
+
