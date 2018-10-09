@@ -9,6 +9,6 @@ Importantly, this will continue to keep the user logged in. This means across ta
 Uses NuxtJS (Helper Framework for VueJS) to handle the front-end.
 
 ## How to run
-`npm i nodemon -g` (If you don't already have it)
-`npm i`
-`npm run dev`
+- `npm i nodemon -g` (If you don't already have it)
+- `npm i`
+- `npm run dev`
