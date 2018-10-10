@@ -41,49 +41,69 @@ passport.serializeUser(UserModel.serializeUser());
 passport.deserializeUser(UserModel.deserializeUser());
 
 expressApp.post("/register", (req, res, next) => {
-  console.log("working....")
   UserModel.register(new UserModel({email: req.body.email}), req.body.password, (err, user) => {
     if (err) {
-      console.log("error");
-      console.log(err)
-      res.send(err);
+      return res.send(err);
     }
     else {
-      console.log("no error")
       passport.authenticate("local")(req, res, () => {
-        console.log(req.body)
-        next()
+        req.login(req.user, (err) => {
+          if (err){
+            return res.send({ sucess: false, message : "login error" } )
+          }
+          return res.send({
+            success: true,
+            user: {
+              email: req.user.email,
+              _id: req.user._id
+            }
+          })
+        })
       });
-      res.send("worked....")
     }
   });
 });
 
-
-expressApp.post('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
+expressApp.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
     if (err) {
       return next(err); // will generate a 500 error
     }
 
     if (! user) {
-      return res.send({ success : false, message : 'authentication failed' });
+      return res.send({ success : false, message : "authentication failed"});
     }
 
     req.login(user, loginErr => {
       if (loginErr) {
         return next(loginErr);
       }
-      return res.send({ success : true, message : 'authentication succeeded' });
+      return res.send({ success : true, message : "authentication succeeded",  user: user });
     });
   })(req, res, next);
 });
 
+expressApp.post("/logout", (req, res, next) => {
+  req.logout();
+  res.send({
+    success: true,
+    user: null
+  })
+});
 
 expressApp.post('/check', function(req, res, next) {
-  console.log(req)
-  console.log(req.isAuthenticated())
-  res.send("yes");
+  if (req.isAuthenticated()){
+    res.send({
+      success: true,
+      user: req.user
+    })
+  }
+  else {
+    res.send({
+      success: true,
+      user: null
+    })
+  }
 });
 
 

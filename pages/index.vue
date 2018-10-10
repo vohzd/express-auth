@@ -1,6 +1,9 @@
 <template lang="html">
   <section>
     <h1>Auth</h1>
+    <section>
+      {{ notifications }}
+    </section>
     <div v-if="!currentUser">
       <h3>Not Logged in</h3>
       <section>
@@ -18,7 +21,8 @@
       </section>
     </div>
     <div v-if="currentUser">
-      <h1>You are logged in as: {{ currentUser }}</h1>
+      <h1>You are logged in as: {{ currentUser.email }} (id: {{ currentUser._id }})</h1>
+      <button @click="logout">Logout</button>
     </div>
   </section>
 </template>
@@ -30,16 +34,15 @@ export default {
       currentUser: null,
       email: null,
       password: null,
+      notifications: ""
     }
   },
   methods: {
     check(){
-      this.$axios.post("http://localhost:1337/check", {
-        options: {
-          "withCredentials": true
+      this.$axios.post("http://localhost:1337/check").then((res) => {
+        if (res.data.success){
+          this.currentUser = res.data.user;
         }
-      }).then((res) => {
-        console.log(res);
       }).catch((err) => {
         console.log(err);
       })
@@ -49,7 +52,8 @@ export default {
         "email": this.email,
         "password": this.password
       }).then((res) => {
-        console.log(res);
+        this.notifications = res.data.message;
+        this.currentUser = res.data.user;
       }).catch((err) => {
         console.log(err);
       })
@@ -59,7 +63,17 @@ export default {
         "email": this.email,
         "password": this.password
       }).then((res) => {
-        console.log(res);
+        this.notifications = res.data.message;
+        this.currentUser = res.data.user;
+      }).catch((err) => {
+        console.log(err);
+      })
+    },
+    logout(){
+      this.$axios.post("http://localhost:1337/logout").then((res) => {
+        if (res.data.success){
+          this.currentUser = res.data.user;
+        }
       }).catch((err) => {
         console.log(err);
       })
